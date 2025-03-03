@@ -1,9 +1,10 @@
 import axios from 'axios';
 import ENV from "../config/env";
 
-export const getAxiosCall = async (endpoint) => {
+export const getAxiosCall = async (endpoint, headers = {}) => {
     try {
-        const res = await axios.get(`${ENV.BASE_URL}${endpoint}`);
+        // console.log(JSON.stringify(headers));
+        const res = await axios.get(`${ENV.BASE_URL}${endpoint}`, headers);
         return res?.data?.data;
     } catch (error) {
         throw Error(JSON.stringify(error?.response));

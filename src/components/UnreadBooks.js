@@ -9,7 +9,7 @@ import '../styles/UnreadBooks.css';
 const UnreadBooks = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth); // Get the logged-in user
+  const { user, token } = useSelector((state) => state.auth); // Get the logged-in user
   const [books, setBooks] = useState([]);
 
   // Redirect to login if user is not logged in
@@ -23,7 +23,10 @@ const UnreadBooks = () => {
   useEffect(() => {
     const fetchUnreadBooks = async () => {
       try {
-        const response = await getAxiosCall(`/user-book-status/unread?customerId=${user._id}`);
+        let headers = {
+          Authorization: token
+        }
+        const response = await getAxiosCall(`/user-book-status/unread?customerId=${user._id}`, { headers });
         setBooks(response.data);
       } catch (error) {
         console.error('Error fetching unread books:', error);
@@ -43,7 +46,12 @@ const UnreadBooks = () => {
     }
 
     try {
-      await postAxiosCall('/user-book-status/toggle', { customerId: user._id, bookId });
+
+      let headers = {
+        Authorization: token
+      }
+
+      await postAxiosCall('/user-book-status/toggle', { customerId: user._id, bookId }, { headers });
 
       // Refresh the books list after toggling status
       const response = await getAxiosCall('/get-books');

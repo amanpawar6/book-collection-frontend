@@ -9,7 +9,7 @@ import '../styles/ReadBooks.css';
 const ReadBooks = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth); // Get the logged-in user
+  const { user, token } = useSelector((state) => state.auth); // Get the logged-in user
   const [books, setBooks] = useState([]);
   const { query, results, isSearching } = useSelector((state) => state.search); // Get search state from Redux
 
@@ -24,7 +24,10 @@ const ReadBooks = () => {
   useEffect(() => {
     const fetchReadBooks = async () => {
       try {
-        const response = await getAxiosCall(`/user-book-status/read?customerId=${user._id}`);
+        let headers = {
+          Authorization: token
+        }
+        const response = await getAxiosCall(`/user-book-status/read?customerId=${user._id}`, { headers });
         setBooks(response.data);
       } catch (error) {
         console.error('Error fetching read books:', error);
@@ -44,7 +47,12 @@ const ReadBooks = () => {
     }
 
     try {
-      await postAxiosCall('/user-book-status/toggle', { customerId: user._id, bookId });
+
+      let headers = {
+        Authorization: token
+      }
+
+      await postAxiosCall('/user-book-status/toggle', { customerId: user._id, bookId }, { headers });
 
       // Refresh the books list after toggling status
       const response = await getAxiosCall('/get-books');

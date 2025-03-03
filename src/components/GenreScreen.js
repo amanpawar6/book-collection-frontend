@@ -4,30 +4,54 @@ import { getAxiosCall } from "../utils/Axios";
 import "../styles/GenreScreen.css";
 
 const GenreScreen = () => {
-
     const [genres, setGenres] = useState([]);
 
     const getGenreByBooks = async () => {
         try {
             let response = await getAxiosCall("/get-genres");
+            // console.log(response);
 
-            console.log(response)
-            setGenres(response);
+            // Sort genres alphabetically
+            const sortedGenres = response.sort((a, b) => a.localeCompare(b));
+            setGenres(sortedGenres);
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     useEffect(() => {
         getGenreByBooks();
     }, []);
 
+    // Split genres into two columns
+    const splitGenresIntoColumns = (genres) => {
+        const midIndex = Math.ceil(genres.length / 2);
+        const firstColumn = genres.slice(0, midIndex);
+        const secondColumn = genres.slice(midIndex);
+        return [firstColumn, secondColumn];
+    };
+
+    const [firstColumn, secondColumn] = splitGenresIntoColumns(genres);
+
     return (
-        <div className="genre-list">
-            {genres.map((genre, index) => (
-                // <button key={index} onClick={() => handleGenreClick(genre)}>{genre}</button>
-                <Link to={`${genre}`}>{genre}</Link>
-            ))}
+        <div className="genre-screen">
+            <h2>Genres</h2>
+            <div className="genre-table">
+                <div className="genre-column">
+                    {firstColumn.map((genre, index) => (
+                        <Link to={`${genre}`} key={index} className="genre-link">
+                            {genre}
+                        </Link>
+                    ))}
+                </div>
+                <div className="genre-column">
+                    {secondColumn.map((genre, index) => (
+                        <Link to={`${genre}`} key={index + firstColumn.length} className="genre-link">
+                            {genre}
+                        </Link>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 };
