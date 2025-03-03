@@ -33,7 +33,7 @@ const BookDetails = () => {
             <p><strong>Author:</strong> {book.author}</p>
             <p><strong>Genre:</strong> {book.genre}</p>
             <p><strong>Publication Year:</strong> {book.publicationYear}</p>
-            {book.coverImage ? (
+            {book?.coverImage ? (
                 <img src={book.coverImage} alt="Book Cover" className="book-cover" />
             ) : (
                 <div className="default-cover">

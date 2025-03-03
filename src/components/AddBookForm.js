@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addBook } from '../redux/slices/bookSlice';
 import { postAxiosCall } from '../utils/Axios';
 import '../styles/AddBookForm.css';
 
 const AddBookForm = () => {
     const dispatch = useDispatch();
+    const { token } = useSelector((state) => state.auth); // Get the logged-in user
     const [book, setBook] = useState({ title: '', author: '', genre: '', publicationYear: '' });
     const [coverImage, setCoverImage] = useState(null);
     const [toastMessage, setToastMessage] = useState('');
@@ -29,7 +30,7 @@ const AddBookForm = () => {
 
         try {
             const response = await postAxiosCall('/add-book', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
+                headers: { 'Content-Type': 'multipart/form-data', Authorization: token },
             });
 
             dispatch(addBook(response.data));

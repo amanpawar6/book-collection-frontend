@@ -63,7 +63,7 @@ const UnreadBooks = () => {
 
   return (
     <div className="book-cards">
-      {books.map((book) => (
+      {books?.map((book) => (
         <BookCard
           key={book._id}
           book={book}

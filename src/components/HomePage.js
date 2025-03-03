@@ -51,8 +51,8 @@ const HomePage = () => {
 
   return (
     <div className="book-cards">
-      {displayedBooks.length ? (
-        displayedBooks.map((book) => (
+      {displayedBooks?.length ? (
+        displayedBooks?.map((book) => (
           <BookCard
             key={book._id}
             book={book}

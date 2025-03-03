@@ -67,7 +67,7 @@ const ReadBooks = () => {
 
   return (
     <div className="book-cards">
-      {displayedBooks.map((book) => (
+      {displayedBooks?.map((book) => (
         <BookCard key={book._id} book={book} user={user}
           onToggleRead={() => toggleReadStatus(book._id)} // Pass toggle function to BookCard
         />

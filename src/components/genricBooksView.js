@@ -57,7 +57,7 @@ const GenreBookScreen = () => {
 
     return (
         <div className="book-cards">
-            {displayedBooks.map((book) => (
+            {displayedBooks?.map((book) => (
                 <BookCard
                     key={book._id}
                     book={book}

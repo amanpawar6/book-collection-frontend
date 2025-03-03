@@ -38,14 +38,14 @@ const GenreScreen = () => {
             <h2>Genres</h2>
             <div className="genre-table">
                 <div className="genre-column">
-                    {firstColumn.map((genre, index) => (
+                    {firstColumn?.map((genre, index) => (
                         <Link to={`${genre}`} key={index} className="genre-link">
                             {genre}
                         </Link>
                     ))}
                 </div>
                 <div className="genre-column">
-                    {secondColumn.map((genre, index) => (
+                    {secondColumn?.map((genre, index) => (
                         <Link to={`${genre}`} key={index + firstColumn.length} className="genre-link">
                             {genre}
                         </Link>
