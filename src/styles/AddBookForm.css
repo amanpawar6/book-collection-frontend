@@ -28,3 +28,25 @@
   font-size: 0.8em;
   margin-top: 5px;
 }
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .book-container {
+    max-width: 90%;
+    padding: 15px;
+  }
+
+  .book-form button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .book-container {
+    padding: 10px;
+  }
+
+  .book-form button {
+    font-size: 14px;
+  }
+}

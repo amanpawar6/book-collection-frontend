@@ -3,12 +3,13 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 16px;
-  margin: 16px;
-  width: 200px;
+  margin: 10px; /* Adjusted margin for smaller screens */
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out;
   background-color: #fff;
+  width: 100%; /* Ensure the card takes full width on smaller screens */
+  box-sizing: border-box; /* Include padding and border in the element's total width */
 }
 
 .book-card:hover {
@@ -62,4 +63,18 @@
   margin-bottom: 12px;
   font-size: 0.9rem;
   color: #666;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .book-card {
+    width: calc(50% - 20px); /* Two cards per row on medium screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .book-card {
+    width: 100%; /* One card per row on small screens */
+    margin: 8px 0; /* Adjusted margin for smaller screens */
+  }
 }

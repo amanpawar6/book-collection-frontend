@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchBooksSuccess } from '../redux/slices/bookSlice';
 import '../styles/GenreBookScreen.css';
 
-
 const GenreBookScreen = () => {
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth); // Get the logged-in user
@@ -14,20 +13,23 @@ const GenreBookScreen = () => {
     const { query, results, isSearching } = useSelector((state) => state.search); // Get search state from Redux
 
     const [books, setBooks] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const fetchGenreBooks = async () => {
         try {
-            let response = await getAxiosCall(`/get-books-by-genre/${genre}`);
-            console.log(response)
-            setBooks(response)
+            const response = await getAxiosCall(`/get-books-by-genre/${genre}`);
+            setBooks(response);
         } catch (error) {
-            console.log(error);
+            setError('Failed to fetch books. Please try again later.');
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
         fetchGenreBooks();
-    }, []);
+    }, [genre]);
 
     // Toggle read status for a book
     const toggleReadStatus = async (bookId) => {
@@ -50,19 +52,20 @@ const GenreBookScreen = () => {
     // Display search results or all books
     const displayedBooks = isSearching ? results : books;
 
+    if (loading) return <div className="loading">Loading...</div>;
+    if (error) return <div className="error">{error}</div>;
+
     return (
-        <>
-            <div className="book-cards">
-                {displayedBooks.map((book) => (
-                    <BookCard
-                        key={book._id}
-                        book={book}
-                        user={user}
-                        onToggleRead={() => toggleReadStatus(book._id)}
-                    />
-                ))}
-            </div>
-        </>
+        <div className="book-cards">
+            {displayedBooks.map((book) => (
+                <BookCard
+                    key={book._id}
+                    book={book}
+                    user={user}
+                    onToggleRead={() => toggleReadStatus(book._id)}
+                />
+            ))}
+        </div>
     );
 };
 

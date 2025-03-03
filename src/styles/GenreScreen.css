@@ -1,4 +1,4 @@
-/* GenreScreen.css */
+/* GenreScreen Styles */
 .genre-screen {
   padding: 20px;
   text-align: center;
@@ -37,4 +37,28 @@
 .genre-link:hover {
   background-color: #007bff;
   color: white;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .genre-table {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .genre-link {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .genre-screen h2 {
+    font-size: 20px;
+  }
+
+  .genre-link {
+    font-size: 14px;
+    padding: 8px;
+  }
 }

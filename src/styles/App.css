@@ -63,3 +63,98 @@ input:focus {
   color: #666;
   margin-top: 20px;
 }
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .book-container {
+    max-width: 90%;
+    margin: 10px auto;
+    padding: 15px;
+  }
+
+  .book-card {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .book-details {
+    max-width: 90%;
+    padding: 15px;
+  }
+
+  .book-form button {
+    width: 100%;
+  }
+
+  .header h1 {
+    font-size: 24px;
+  }
+
+  .footer p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .book-container {
+    padding: 10px;
+  }
+
+  .book-card {
+    width: 100%;
+    margin: 8px 0;
+  }
+
+  .book-details {
+    padding: 10px;
+  }
+
+  .header h1 {
+    font-size: 20px;
+  }
+
+  .footer p {
+    font-size: 12px;
+  }
+
+  .book-form button {
+    font-size: 14px;
+  }
+}
+
+.main-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  padding: 20px;
+}
+
+.section {
+  flex: 1 1 calc(50% - 40px);
+  /* Two sections per row on larger screens */
+  margin: 10px;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f4f4f4;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .section {
+    flex: 1 1 calc(100% - 40px);
+    /* One section per row on smaller screens */
+  }
+}
+
+.loading {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 20px;
+}
+
+.error {
+  text-align: center;
+  font-size: 18px;
+  color: red;
+  margin-top: 20px;
+}
