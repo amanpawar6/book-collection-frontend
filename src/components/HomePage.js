@@ -12,7 +12,7 @@ const HomePage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { books, loading, error, currentPage, totalPages } = useSelector((state) => state.books); // Get pagination data
-  const { user } = useSelector((state) => state.auth); // Get the logged-in user
+  const { user, token } = useSelector((state) => state.auth); // Get the logged-in user
   const { query, results, isSearching } = useSelector((state) => state.search); // Get search state from Redux
 
   const [page, setPage] = useState(1); // Track the current page
@@ -66,8 +66,12 @@ const HomePage = () => {
     }
 
     try {
+
+      let headers = {
+        Authorization: token
+      }
       // Call the API to toggle the read status
-      const response = await postAxiosCall('/user-book-status/toggle', { customerId: user._id, bookId });
+      const response = await postAxiosCall('/user-book-status/toggle', { customerId: user._id, bookId }, { headers });
 
       // Update the local state immediately
       const updatedReadStatus = response.data.isDeleted ? false : true; // Assuming the API returns the updated read status

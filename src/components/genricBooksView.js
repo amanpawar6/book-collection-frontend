@@ -12,7 +12,7 @@ const GenreBookScreen = () => {
     const dispatch = useDispatch();
     const { genre } = useParams();
     const navigate = useNavigate();
-    const { user } = useSelector((state) => state.auth); // Get the logged-in user
+    const { user, token } = useSelector((state) => state.auth); // Get the logged-in user
     const { books, loading, error, currentPage, totalPages } = useSelector((state) => state.books); // Get pagination data
     const { query, results, isSearching } = useSelector((state) => state.search); // Get search state from Redux
 
@@ -69,7 +69,12 @@ const GenreBookScreen = () => {
         }
 
         try {
-            const response = await postAxiosCall('/user-book-status/toggle', { customerId: user._id, bookId });
+
+            let headers = {
+                Authorization: token
+            }
+
+            const response = await postAxiosCall('/user-book-status/toggle', { customerId: user._id, bookId }, { headers });
 
             // Update the local state immediately
             const updatedReadStatus = response.data.isDeleted ? false : true; // Assuming the API returns the updated read status
