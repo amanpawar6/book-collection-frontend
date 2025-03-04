@@ -19,20 +19,20 @@ const HomePage = () => {
     return () => {
       dispatch(resetBooks()); // Reset the books state when the component unmounts
     };
-  }, [dispatch]);
+  }, []);
 
   // Fetch all books
   useEffect(() => {
-    const fetchBooks = async () => {
+    const fetchBooks = async (replace = false) => {
       dispatch(fetchBooksStart());
       try {
         const response = await getAxiosCall(`/get-books?page=${page}`); // Pass the page number
-        dispatch(fetchBooksSuccess(response)); // Pass the API response to Redux
+        dispatch(fetchBooksSuccess({ data: response.data, currentPage: response.currentPage, totalPages: response.totalPages, replace })); // Pass the API response to Redux
       } catch (error) {
         dispatch(fetchBooksFailure(error.message));
       }
     };
-    fetchBooks();
+    fetchBooks(page === 1);
   }, [dispatch, page]);
 
   // Infinite scroll logic
