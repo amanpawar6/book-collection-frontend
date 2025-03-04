@@ -68,7 +68,7 @@ const AppContent = () => {
   }, [debouncedSearch]);
 
   // Conditionally render the SearchBar based on the route
-  const showSearchBar = !['/login', '/signup'].includes(location.pathname);
+  const showSearchBar = !['/login', '/signup', "/addbooks"].includes(location.pathname);
 
   return (
     <>

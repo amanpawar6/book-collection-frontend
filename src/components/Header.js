@@ -19,7 +19,7 @@ const Header = () => {
       <Link to="/"><h1>Personal Book Collection</h1></Link>
       <nav>
         <Link to="/genres">All Genres</Link>
-        {user && <Link to="/addbooks">Add Book</Link>} {/* Only show for logged-in users */}
+        {user && <Link to="/addbooks">Add Book</Link>}
         <Link to="/readbooks">Read Books</Link>
         <Link to="/unreadbooks">Unread Books</Link>
         {user ? (

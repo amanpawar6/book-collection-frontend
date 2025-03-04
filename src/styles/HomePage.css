@@ -29,3 +29,10 @@
     padding: 10px;
   }
 }
+
+.loading-spinner {
+  text-align: center;
+  font-size: 18px;
+  margin: 20px 0;
+  color: #007bff;
+}
