@@ -17,12 +17,8 @@ const bookSlice = createSlice({
             state.error = null;
         },
         fetchBooksSuccess: (state, action) => {
-            const { data, currentPage, totalPages, replace } = action.payload; // Add replace flag
-            if (replace) {
-                state.books = data; // Replace the list if replace flag is true (for ReadBooks)
-            } else {
-                state.books = [...state.books, ...data]; // Append for pagination (Homepage)
-            }
+            const { data, currentPage, totalPages, replace } = action.payload;
+            state.books = replace ? data : [...state.books, ...data]; // Reset or append based on replace flag
             state.currentPage = currentPage;
             state.totalPages = totalPages;
             state.loading = false;
@@ -47,7 +43,7 @@ const bookSlice = createSlice({
             }
         },
         toggleFilterBooks: (state, action) => {
-            const { bookId } = action.payload; 
+            const { bookId } = action.payload;
             state.books = state.books.filter((book) => book._id !== bookId); // Remove the book by filtering
         },
     },
