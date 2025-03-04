@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addBook } from '../redux/slices/bookSlice';
+import { logout } from '../redux/slices/authSlice';
 import { postAxiosCall } from '../utils/Axios';
+import { showToast } from '../utils/toast';
 import '../styles/AddBookForm.css';
 
 const AddBookForm = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { token } = useSelector((state) => state.auth); // Get the logged-in user
     const [book, setBook] = useState({ title: '', author: '', genre: '', publicationYear: '' });
     const [coverImage, setCoverImage] = useState(null);
-    const [toastMessage, setToastMessage] = useState('');
     const [fileError, setFileError] = useState(''); // New state for file error
 
     const handleSubmit = async (e) => {
@@ -34,12 +37,18 @@ const AddBookForm = () => {
             });
 
             dispatch(addBook(response.data));
-            setToastMessage("Book added successfully.");
+            showToast("Book added successfully.", "success");
             setBook({ title: '', author: '', genre: '', publicationYear: '' });
             setCoverImage(null);
         } catch (error) {
             console.error('Error adding book:', error);
-            setToastMessage("Failed to add book. Please try again.");
+            let errorMessage = error?.message ? JSON.parse(error?.message) : "";
+            if (errorMessage?.status === 403 || errorMessage?.status === 401) {
+                dispatch(logout());
+                showToast('Session expire, Please login again.', 'error');
+                navigate('/login');
+            }
+            showToast("Failed to add book. Please try again.", "error");
         }
     };
 
@@ -59,7 +68,6 @@ const AddBookForm = () => {
                 {fileError && <p className="error">{fileError}</p>} {/* Display file error */}
                 <button type="submit">Add Book</button>
             </form>
-            {toastMessage && <div className="toast">{toastMessage}</div>}
         </div>
     );
 };

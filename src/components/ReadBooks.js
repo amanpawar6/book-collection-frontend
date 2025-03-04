@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from 'react-redux'; // Remove useDispatch
 import { useNavigate } from 'react-router-dom';
 import { getAxiosCall, postAxiosCall } from '../utils/Axios';
 import { fetchBooksSuccess, toggleFilterBooks, resetBooks } from '../redux/slices/bookSlice';
+import { logout } from '../redux/slices/authSlice';
 import BookCard from './BookCard';
+import { showToast } from '../utils/toast';
 import '../styles/ReadBooks.css';
 
 const ReadBooks = () => {
@@ -40,8 +42,14 @@ const ReadBooks = () => {
         dispatch(fetchBooksSuccess({ data: response.data, currentPage: response.currentPage, totalPages: response.totalPages, replace }));
       } catch (error) {
         console.error('Error fetching read books:', error);
+        let errorMessage = error?.message ? JSON.parse(error?.message) : "";
+        if (errorMessage?.status === 403 || errorMessage?.status === 401) {
+          dispatch(logout());
+          showToast('Session expire, Please login again.', 'error');
+          navigate('/login');
+        }
       }
-    };    
+    };
 
     if (user) {
       fetchReadBooks(page === 1); // Pass true if it's the first page
@@ -69,7 +77,7 @@ const ReadBooks = () => {
   // Toggle read status for a book
   const toggleReadStatus = async (bookId) => {
     if (!user) {
-      alert('Please log in to mark books as read/unread.');
+      showToast('Please log in to mark books as read/unread.', "warning");
       return;
     }
 
@@ -89,7 +97,13 @@ const ReadBooks = () => {
       // const response = await getAxiosCall('/get-books');
       // dispatch(fetchBooksSuccess(response?.data));
     } catch (error) {
-      console.error('Error toggling read status:', error);
+      // console.error('Error toggling read status:', error);
+      let errorMessage = error?.message ? JSON.parse(error?.message) : "";
+      if (errorMessage?.status === 403 || errorMessage?.status === 401) {
+        dispatch(logout());
+        showToast('Session expire, Please login again.', 'error');
+        navigate('/login');
+      }
     }
   };
 

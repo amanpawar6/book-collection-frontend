@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import '../styles/Login.css'; // Import CSS
 import { postAxiosCall } from '../utils/Axios';
-import { login } from '../redux/slices/authSlice';
+import { login, logout } from '../redux/slices/authSlice';
+import { showToast } from '../utils/toast';
 import '../styles/Login.css';
 
 const LoginPage = () => {
@@ -12,16 +13,6 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
-  const [toastMessage, setToastMessage] = useState('');
-
-  useEffect(() => {
-    if (toastMessage) {
-      const timer = setTimeout(() => {
-        setToastMessage('');
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [toastMessage]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,17 +22,27 @@ const LoginPage = () => {
         let body = { email: email.trim(), password };
         const response = await postAxiosCall('/login', body);
         if (response?.success) {
-          setToastMessage(response?.message || 'Successfully logged in.');
+          showToast(response?.message || 'Successfully logged in.', "success");
           localStorage.setItem('isLoggedIn', 'true');
           localStorage.setItem('token', response?.data?.token);
           localStorage.setItem('userDetails', JSON.stringify(response?.data?.userDetails));
           dispatch(login({ user: response?.data?.userDetails, token: response?.data?.token }));
           navigate('/');
         } else {
-          setToastMessage(response?.data?.message || 'Login failed. Please try again.');
+          showToast(response?.data?.message || 'Login failed. Please try again.', "error");
         }
       } catch (error) {
-        setToastMessage(error?.response?.data?.message || 'An error occurred while logging in. Please try again later.');
+        let errorMessage = error?.message ? JSON.parse(error?.message) : "";
+        console.log(errorMessage);
+        if (errorMessage?.status === 403 || errorMessage?.status === 401) {
+          dispatch(logout());
+          showToast('Session expire, Please login again.', 'error');
+          navigate('/login');
+        } else if (errorMessage?.status === 404) {
+          showToast(errorMessage?.data?.message, "error");
+        } else {
+          showToast('An error occurred while logging in. Please try again later.', "error");
+        }
       }
     } else {
       setErrors(errors);
@@ -71,7 +72,6 @@ const LoginPage = () => {
         {errors.password && <p className="error">{errors.password}</p>}
         <button type="submit">Login</button>
       </form>
-      {toastMessage && <div className="toast">{toastMessage}</div>}
     </div>
   );
 };

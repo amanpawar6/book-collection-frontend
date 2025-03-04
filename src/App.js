@@ -16,6 +16,7 @@ import GenreBookScreen from './components/genricBooksView';
 import { login, logout } from './redux/slices/authSlice'; // Import auth actions
 import { setSearchQuery, setSearchResults, setIsSearching } from './redux/slices/searchSlice'; // Import search actions
 import { getAxiosCall } from './utils/Axios';
+import { ToastContainer } from 'react-toastify';
 import './styles/App.css';
 
 // Create a new component to handle conditional rendering
@@ -74,6 +75,17 @@ const AppContent = () => {
     <>
       <Header user={user} onLogout={() => dispatch(logout())} /> {/* Pass logout action */}
       {showSearchBar && <SearchBar handleSearch={handleSearch} />} {/* Conditionally render SearchBar */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000} // Auto-close after 3 seconds
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/books/:id" element={<BookDetails />} />

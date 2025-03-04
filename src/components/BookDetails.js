@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getAxiosCall } from '../utils/Axios';
+import { showToast } from '../utils/toast';
 import '../styles/BookDetails.css';
 
 const BookDetails = () => {
@@ -14,8 +15,9 @@ const BookDetails = () => {
             try {
                 const response = await getAxiosCall(`/get-book-details/${id}`);
                 setBook(response.data);
+                // showToast("Book Details fetched successfully.", "success");
             } catch (error) {
-                setError('Failed to fetch book details. Please try again later.');
+                showToast('Failed to fetch book details. Please try again later.', "error");
             } finally {
                 setLoading(false);
             }

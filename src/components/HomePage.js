@@ -1,12 +1,16 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBooksStart, fetchBooksSuccess, fetchBooksFailure, resetBooks, toggleReadStatusSuccess } from '../redux/slices/bookSlice';
+import { logout } from '../redux/slices/authSlice';
 import BookCard from './BookCard';
 import { getAxiosCall, postAxiosCall } from '../utils/Axios';
+import { showToast } from '../utils/toast';
 import '../styles/HomePage.css';
 
 const HomePage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { books, loading, error, currentPage, totalPages } = useSelector((state) => state.books); // Get pagination data
   const { user } = useSelector((state) => state.auth); // Get the logged-in user
   const { query, results, isSearching } = useSelector((state) => state.search); // Get search state from Redux
@@ -30,6 +34,7 @@ const HomePage = () => {
         dispatch(fetchBooksSuccess({ data: response.data, currentPage: response.currentPage, totalPages: response.totalPages, replace })); // Pass the API response to Redux
       } catch (error) {
         dispatch(fetchBooksFailure(error.message));
+        showToast('Failed to fetch books', 'error');
       }
     };
     fetchBooks(page === 1);
@@ -56,7 +61,7 @@ const HomePage = () => {
   // Toggle read status for a book
   const toggleReadStatus = async (bookId) => {
     if (!user) {
-      alert('Please log in to mark books as read/unread.');
+      showToast('Please log in to mark books as read/unread.', 'warning');
       return;
     }
 
@@ -68,11 +73,21 @@ const HomePage = () => {
       const updatedReadStatus = response.data.isDeleted ? false : true; // Assuming the API returns the updated read status
       dispatch(toggleReadStatusSuccess({ bookId, read: updatedReadStatus }));
 
+      showToast(`Book marked as ${updatedReadStatus ? 'read' : 'unread'}`, 'success');
+
       // Optionally, refresh the books list from the server
       // const booksResponse = await getAxiosCall(`/get-books?page=${page}`);
       // dispatch(fetchBooksSuccess(booksResponse));
     } catch (error) {
-      console.error('Error toggling read status:', error);
+      // console.error('Error toggling read status:', error);
+      let errorMessage = error?.message ? JSON.parse(error?.message) : "";
+      if (errorMessage?.status === 403 || errorMessage?.status === 401) {
+        dispatch(logout());
+        showToast('Session expire, Please login again.', 'error');
+        navigate('/login');
+      } else {
+        showToast('Failed to update the status', 'error');
+      }
     }
   };
 

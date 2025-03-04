@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Signup.css';
 import { postAxiosCall } from '../utils/Axios';
+import { showToast } from '../utils/toast';
 import '../styles/Signup.css';
 
 const SignUpPage = () => {
@@ -13,16 +14,6 @@ const SignUpPage = () => {
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [errors, setErrors] = useState({});
-    const [toastMessage, setToastMessage] = useState('');
-
-    useEffect(() => {
-        if (toastMessage) {
-            const timer = setTimeout(() => {
-                setToastMessage('');
-            }, 1000); // Close toast after 1 second
-            return () => clearTimeout(timer);
-        }
-    }, [toastMessage]);
 
     const handleSubmit = async (e) => {
         try {
@@ -41,7 +32,7 @@ const SignUpPage = () => {
                 }
                 const response = await postAxiosCall(`/signup`, body);
 
-                setToastMessage(response?.data?.message);
+                showToast(response?.data?.message, "success");
                 navigate('/login');
 
             } else {
@@ -52,9 +43,9 @@ const SignUpPage = () => {
             let errorMessage = error?.message ? JSON.parse(error?.message) : "";
 
             if (errorMessage?.status === 400) {
-                setToastMessage(errorMessage?.data?.message);
+                showToast(errorMessage?.data?.message, "error");
             } else {
-                setToastMessage("Something went wrong.");
+                showToast("Something went wrong.", "error");
             }
 
             // setErrors(errors?.response?.data?.message);
@@ -101,7 +92,6 @@ const SignUpPage = () => {
                 {errors?.password && <p className="error">{errors?.password}</p>}
                 <button type="submit">Sign Up</button>
             </form>
-            {toastMessage && <div className="toast">{toastMessage}</div>}
         </div>
     );
 };

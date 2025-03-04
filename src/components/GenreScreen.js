@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAxiosCall } from "../utils/Axios";
+import { showToast } from '../utils/toast';
 import "../styles/GenreScreen.css";
 
 const GenreScreen = () => {
@@ -15,7 +16,8 @@ const GenreScreen = () => {
             const sortedGenres = response.sort((a, b) => a.localeCompare(b));
             setGenres(sortedGenres);
         } catch (error) {
-            console.log(error);
+            // console.log(error);
+            showToast("Failed to fetch genres", "error");
         }
     };
 
