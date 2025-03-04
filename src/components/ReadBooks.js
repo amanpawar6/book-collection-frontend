@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'; // Remove useDispatch
 import { useNavigate } from 'react-router-dom';
 import { getAxiosCall, postAxiosCall } from '../utils/Axios';
-import { fetchBooksSuccess } from '../redux/slices/bookSlice';
+import { fetchBooksSuccess, toggleFilterBooks } from '../redux/slices/bookSlice';
 import BookCard from './BookCard';
 import '../styles/ReadBooks.css';
 
@@ -10,7 +10,8 @@ const ReadBooks = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user, token } = useSelector((state) => state.auth); // Get the logged-in user
-  const [books, setBooks] = useState([]);
+  // const [books, setBooks] = useState([]);
+  const { books, loading, error, currentPage, totalPages } = useSelector((state) => state.books); // Get pagination data
   const { query, results, isSearching } = useSelector((state) => state.search); // Get search state from Redux
 
   // Redirect to login if user is not logged in
@@ -28,7 +29,7 @@ const ReadBooks = () => {
           Authorization: token
         }
         const response = await getAxiosCall(`/user-book-status/read?customerId=${user._id}`, { headers });
-        setBooks(response.data);
+        dispatch(fetchBooksSuccess({ data: response.data, currentPage, totalPages, replace: true }));
       } catch (error) {
         console.error('Error fetching read books:', error);
       }
@@ -52,11 +53,15 @@ const ReadBooks = () => {
         Authorization: token
       }
 
+      // Call the API to toggle the read status
       await postAxiosCall('/user-book-status/toggle', { customerId: user._id, bookId }, { headers });
 
+      // Update the local state immediately
+      dispatch(toggleFilterBooks({ bookId }));
+
       // Refresh the books list after toggling status
-      const response = await getAxiosCall('/get-books');
-      dispatch(fetchBooksSuccess(response?.data));
+      // const response = await getAxiosCall('/get-books');
+      // dispatch(fetchBooksSuccess(response?.data));
     } catch (error) {
       console.error('Error toggling read status:', error);
     }
@@ -68,7 +73,10 @@ const ReadBooks = () => {
   return (
     <div className="book-cards">
       {displayedBooks?.map((book) => (
-        <BookCard key={book._id} book={book} user={user}
+        <BookCard
+          key={book._id}
+          book={book}
+          user={user}
           onToggleRead={() => toggleReadStatus(book._id)} // Pass toggle function to BookCard
         />
       ))}
