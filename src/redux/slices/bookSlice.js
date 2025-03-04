@@ -35,6 +35,13 @@ const bookSlice = createSlice({
       state.currentPage = 1; // Reset the current page
       state.totalPages = 1; // Reset the total pages
     },
+    toggleReadStatusSuccess: (state, action) => {
+      const { bookId, read } = action.payload; // Get the book ID and new read status
+      const bookIndex = state.books.findIndex((book) => book._id === bookId); // Find the book in the list
+      if (bookIndex !== -1) {
+        state.books[bookIndex].read = read; // Update the read status
+      }
+    },
   },
 });
 
@@ -44,5 +51,6 @@ export const {
   fetchBooksFailure,
   addBook,
   resetBooks,
+  toggleReadStatusSuccess,
 } = bookSlice.actions;
 export default bookSlice.reducer;

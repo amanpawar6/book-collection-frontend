@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBooksStart, fetchBooksSuccess, fetchBooksFailure, resetBooks } from '../redux/slices/bookSlice';
+import { fetchBooksStart, fetchBooksSuccess, fetchBooksFailure, resetBooks, toggleReadStatusSuccess } from '../redux/slices/bookSlice';
 import BookCard from './BookCard';
 import { getAxiosCall, postAxiosCall } from '../utils/Axios';
 import '../styles/HomePage.css';
@@ -61,11 +61,16 @@ const HomePage = () => {
     }
 
     try {
-      await postAxiosCall('/user-book-status/toggle', { customerId: user._id, bookId });
+      // Call the API to toggle the read status
+      const response = await postAxiosCall('/user-book-status/toggle', { customerId: user._id, bookId });
 
-      // Refresh the books list after toggling status
-      const response = await getAxiosCall('/get-books');
-      dispatch(fetchBooksSuccess(response.data));
+      // Update the local state immediately
+      const updatedReadStatus = response.data.isDeleted ? false : true; // Assuming the API returns the updated read status
+      dispatch(toggleReadStatusSuccess({ bookId, read: updatedReadStatus }));
+
+      // Optionally, refresh the books list from the server
+      // const booksResponse = await getAxiosCall(`/get-books?page=${page}`);
+      // dispatch(fetchBooksSuccess(booksResponse));
     } catch (error) {
       console.error('Error toggling read status:', error);
     }
