@@ -88,10 +88,13 @@ const ReadBooks = () => {
       }
 
       // Call the API to toggle the read status
-      await postAxiosCall('/user-book-status/toggle', { customerId: user._id, bookId }, { headers });
+      let response = await postAxiosCall('/user-book-status/toggle', { customerId: user._id, bookId }, { headers });
 
       // Update the local state immediately
+      const updatedReadStatus = response.data.isDeleted ? false : true;
       dispatch(toggleFilterBooks({ bookId }));
+
+      showToast(`Book marked as ${updatedReadStatus ? 'read' : 'unread'}`, 'success');
 
       // Refresh the books list after toggling status
       // const response = await getAxiosCall('/get-books');

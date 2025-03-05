@@ -74,7 +74,7 @@ const HomePage = () => {
       const response = await postAxiosCall('/user-book-status/toggle', { customerId: user._id, bookId }, { headers });
 
       // Update the local state immediately
-      const updatedReadStatus = response.data.isDeleted ? false : true; // Assuming the API returns the updated read status
+      const updatedReadStatus = response.data.isDeleted ? false : true;
       dispatch(toggleReadStatusSuccess({ bookId, read: updatedReadStatus }));
 
       showToast(`Book marked as ${updatedReadStatus ? 'read' : 'unread'}`, 'success');
